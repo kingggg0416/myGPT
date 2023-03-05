@@ -12,7 +12,7 @@ st.set_page_config(
 )
 
 st.markdown("Made with love by Kelvin Wong. :blue_heart:")
-st.markdown(" - Follow me at Instagram @wongkingwang")
+st.markdown(" - Follow me on Instagram @<a href = 'https://www.instagram.com/wongkingwang/'>wongkingwang</a>",unsafe_allow_html=True)
 st.markdown(" - Find me @<a href = 'https://www.linkedin.com/in/kelvinwonghkust/'>linkedln</a>",unsafe_allow_html=True)
 st.markdown("<hr>",unsafe_allow_html=True)
 
@@ -59,7 +59,7 @@ with st.sidebar:
     myGPT is a project created by me,
     aiming to create an interesting chatting experience
     for everyone, like you.''')
-    st.markdown("myGPT is built upon gpt-3.5-turbo, the lastest language model developed by OpenAI.")
+    st.markdown("myGPT is built on gpt-3.5-turbo, the lastest language model developed by OpenAI.")
     st.write('''
     If you want to know more about OpenAI, or chatGPT in general, click <a href = 'https://openai.com/'>here</a>
     ''',unsafe_allow_html=True)
