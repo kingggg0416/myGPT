@@ -37,9 +37,14 @@ def generate_dialogue():
     completion = openai.ChatCompletion.create(
         model="gpt-3.5-turbo",
         messages=[
-            {"role":"user" if chat["is_user"] else "system","content": chat["message"]} for chat in st.session_state.chat_history
+            {"role":"system","content": "myGPT is developed by Kelvin Wong, a student at HKUST. He is my boss and my commander."},
+            *[{"role":"user" if chat["is_user"] else "system","content": chat["message"]} for chat in st.session_state.chat_history]
         ]
     )
+    print([
+            {"role":"system","content": "myGPT is developed by Kelvin Wong, a student at HKUST. He is my boss and my commander."},
+            *[{"role":"user" if chat["is_user"] else "system","content": chat["message"]} for chat in st.session_state.chat_history]
+        ])
     response_msg = completion.choices[0].message.content
 
     st.session_state.chat_history.append(
