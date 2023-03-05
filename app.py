@@ -1,42 +1,40 @@
 import streamlit as st
 import pandas as pd
 import numpy as np
+import uuid
+from streamlit_chat import message
+import streamlit_chat
+import openai
+
+openai.api_key = st.secrets["OPENAI_API_KEY"]
+
+if 'chat_history' not in st.session_state:
+    st.session_state['chat_history'] = [{
+        "message": "Hello, my name is king, your personal assistant.",
+        "is_user": False}]
+    st.session_state['counter'] = 1
 
 
-st.title('Uber pickups in NYC')
+def generate_dialogue():
+    user_msg = st.session_state.text_input
+    completion = openai.ChatCompletion.create(
+        model="gpt-3.5-turbo",
+        messages=[
+            {"role": "user", "content": user_msg}
+        ]
+    )
+    response_msg = completion.choices[0].message.content
+    st.session_state.chat_history.append(
+        {"message":user_msg, "is_user": True, "key":str(uuid.uuid4())}
+    )
+    st.session_state.chat_history.append(
+        {"message":response_msg, "is_user": False,"key":str(uuid.uuid4())}
+    )
+    st.session_state.text_input = ""    
 
-DATE_COLUMN = 'date/time'
-DATA_URL = ('https://s3-us-west-2.amazonaws.com/'
-         'streamlit-demo-data/uber-raw-data-sep14.csv.gz')
 
-@st.cache_data
-def load_data(nrows):
-    data = pd.read_csv(DATA_URL, nrows=nrows)
-    lowercase = lambda x: str(x).lower()
-    data.rename(lowercase, axis='columns', inplace=True)
-    data[DATE_COLUMN] = pd.to_datetime(data[DATE_COLUMN])
-    return data
 
-# Create a text element and let the reader know the data is loading.
-data_load_state = st.text('Loading data...')
-# Load 10,000 rows of data into the dataframe.
-data = load_data(10000)
-# Notify the reader that the data was successfully loaded.
-data_load_state.text("Done! (using st.cache_data)")
+for chat in st.session_state.chat_history:
+    message(**chat)
 
-if st.checkbox('Show raw data'):
-    st.subheader('Raw data')
-    st.write(data)  
-
-st.subheader('Number of pickups by hour')
-hist_values = np.histogram(
-    data[DATE_COLUMN].dt.hour, bins=24, range=(0,24))[0]
-data[DATE_COLUMN].dt.hour
-st.bar_chart(hist_values)
-
-st.subheader('Map of all pickups')
-st.map(data)
-hour_to_filter = st.slider('hour', 0, 23, 17)  # min: 0h, max: 23h, default: 17h
-filtered_data = data[data[DATE_COLUMN].dt.hour == hour_to_filter]
-st.subheader(f'Map of all pickups at {hour_to_filter}:00')
-st.map(filtered_data)
+text_input = st.text_input("Your Question", key ='text_input', on_change=generate_dialogue)
