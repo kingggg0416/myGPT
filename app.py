@@ -37,14 +37,10 @@ def generate_dialogue():
     completion = openai.ChatCompletion.create(
         model="gpt-3.5-turbo",
         messages=[
-            {"role":"system","content": "myGPT is developed by Kelvin Wong, a student at HKUST. He is my boss and my commander."},
-            *[{"role":"user" if chat["is_user"] else "system","content": chat["message"]} for chat in st.session_state.chat_history]
+            {"role":"system","content": "My name is myGPT, a chatbot developed by Kelvin Wong."},
+            *[{"role":"user" if chat["is_user"] else "system","content": chat["message"]} for chat in st.session_state.chat_history[-5:]]
         ]
     )
-    print([
-            {"role":"system","content": "myGPT is developed by Kelvin Wong, a student at HKUST. He is my boss and my commander."},
-            *[{"role":"user" if chat["is_user"] else "system","content": chat["message"]} for chat in st.session_state.chat_history]
-        ])
     response_msg = completion.choices[0].message.content
 
     st.session_state.chat_history.append(
@@ -57,7 +53,7 @@ with st.expander("Chat history",expanded=True):
     for chat in st.session_state.chat_history:
         message(**chat)
 
-#text_input = st.text_input("Your Question", key ='text_input',placeholder="Type something", on_change=generate_dialogue)
+text_input = st.text_input("Your Question", key ='text_input',placeholder="Type something", on_change=generate_dialogue)
 
 
 
@@ -75,4 +71,4 @@ with st.sidebar:
     ''',unsafe_allow_html=True)
 
 
-txt = st.text_area("Your Question", key ='text_input',placeholder="Type something", on_change=generate_dialogue)
+# txt = st.text_area("Your Question", key ='text_input',placeholder="Type something", on_change=generate_dialogue)
