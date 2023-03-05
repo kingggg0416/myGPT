@@ -57,7 +57,7 @@ with st.expander("Chat history",expanded=True):
     for chat in st.session_state.chat_history:
         message(**chat)
 
-text_input = st.text_input("Your Question", key ='text_input',placeholder="Type something", on_change=generate_dialogue)
+#text_input = st.text_input("Your Question", key ='text_input',placeholder="Type something", on_change=generate_dialogue)
 
 
 
@@ -73,3 +73,6 @@ with st.sidebar:
     st.caption('''
     If you want to know more about OpenAI, or chatGPT in general, click <a href = 'https://openai.com/'>here</a>
     ''',unsafe_allow_html=True)
+
+
+txt = st.text_area("Your Question", key ='text_input',placeholder="Type something", on_change=generate_dialogue)
