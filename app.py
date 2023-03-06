@@ -21,12 +21,13 @@ st.markdown("<hr>",unsafe_allow_html=True)
 
 openai.api_key = st.secrets["OPENAI_API_KEY"]
 
-if 'chat_history' not in st.session_state:
-    st.session_state['chat_history'] = [{
-        "message": "Hello, I'm myGPT, your personal assistant.",
-        "avatar_style":"big-smile",
-        "seed":"Aneka",
-        "is_user": False}]
+def init_chat_history():
+    if 'chat_history' not in st.session_state:
+        st.session_state['chat_history'] = [{
+            "message": "Hello, I'm myGPT, your personal assistant.",
+            "avatar_style":"big-smile",
+            "seed":"Aneka",
+            "is_user": False}]
     
 
 def generate_dialogue():
@@ -38,7 +39,7 @@ def generate_dialogue():
         model="gpt-3.5-turbo",
         messages=[
             {"role":"system","content": "My name is myGPT, a chatbot developed by Kelvin Wong."},
-            *[{"role":"user" if chat["is_user"] else "system","content": chat["message"]} for chat in st.session_state.chat_history[-5:]]
+            *[{"role":"user" if chat["is_user"] else "system","content": chat["message"]} for chat in st.session_state.chat_history[-8:]]
         ]
     )
     response_msg = completion.choices[0].message.content
@@ -48,10 +49,16 @@ def generate_dialogue():
     )
     st.session_state.text_input = ""    
 
+def clear_chat_history():
+    st.session_state.chat_history = []
+
+### start of the code
+init_chat_history()
 
 with st.expander("Chat history",expanded=True):
     for chat in st.session_state.chat_history:
         message(**chat)
+    clear_chat_button = st.button("Clear Chat History", on_click=clear_chat_history)
 
 text_input = st.text_input("Your Question", key ='text_input',placeholder="Type something", on_change=generate_dialogue)
 
